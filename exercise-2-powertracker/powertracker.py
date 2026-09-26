@@ -38,16 +38,16 @@ while True:
         count += 1
         pre_result = result
         list.append(result)
+        print(f"Lop {count}: {num}^{power} = {result}")
         continue
         
-    if (pre_result%result)==0:
-        print(f"this is count {count}")
-        print(f"{pre_result} and {result}")
+    else:
+        count += 1
+        print(f"Lop {count}: {num}^{power} = {result}")
         break
         
     
-print(list)
-print(max(list))
-print(min(list))
-    
-
+print(f"The largest result is {max(list)}")
+print(f"The smallest result is {min(list)}")
+print(f"{pre_result} is divisible by {result}")
+print(f"We completed {count} loops")
