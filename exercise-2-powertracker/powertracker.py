@@ -21,7 +21,7 @@ while True:
         print(f"Lop {count}: {num}^{power} = {result}") #print values
         continue # go back to the start of the loop
         
-    else: #else if the current result is divisible by the previouse result
+    elif  (result%pre_result)==0 and pre_result!=1:#else if the current result is divisible by the previouse result #+extension (if the previous number is *not* 1)
         count += 1 #add the count to the loop or iteration
         print(f"Lop {count}: {num}^{power} = {result}") #print values
         break #stop while loop
