@@ -1,53 +1,33 @@
-import random
-#n=10
-li = random.randint(1, 20)#generate random numbers, but with a range
-power= random.choice([2,3])
-j = li**power
-#Function that squares the numbers
-# def square(n):
-#     list=[]
-#     for i in n:
-#         list.append(i**2)
-#     return list
+#Valeria Trijueque
 
-#Function that cubes the numbers:
-# def cube(n):
-#     list=[]
-#     for i in n:
-#         list.append(i**3)
-#     return list
+import random #Import random library
 
-# while True
-#     j = li**power
-#     if j
+num = random.randint(1, 20) #Make random numbers from 1 to 20
+power = random.choice([2,3]) #Choose between square or cube
+pre_result = num**power #Create the first previous result
+list = [] #Initialize a list
+count = 0 #Initialize a count
 
-
-
-
-num = random.randint(1, 20)
-power = random.choice([2,3])
-pre_result = num**power
-list = []
-count = 0
+#While loop
 while True:
     num = random.randint(1, 20)
     power = random.choice([2,3])
-    result = num**power
+    result = num**power #create random numbers and then randomly square them or cube them
     
-    if (pre_result%result)!=0:
-        count += 1
-        pre_result = result
-        list.append(result)
-        print(f"Lop {count}: {num}^{power} = {result}")
-        continue
+    if (result%pre_result)!=0: # if the current result is not divisible by the previouse result, meaning that the remainder is not 0
+        count += 1 #add the count of the loop or iteration
+        pre_result = result #update the previouse result
+        list.append(result) #store results to the list
+        print(f"Lop {count}: {num}^{power} = {result}") #print values
+        continue # go back to the start of the loop
         
-    else:
-        count += 1
-        print(f"Lop {count}: {num}^{power} = {result}")
-        break
+    else: #else if the current result is divisible by the previouse result
+        count += 1 #add the count to the loop or iteration
+        print(f"Lop {count}: {num}^{power} = {result}") #print values
+        break #stop while loop
         
-    
-print(f"The largest result is {max(list)}")
+#print values
+print(f"The largest result is {max(list)}") 
 print(f"The smallest result is {min(list)}")
 print(f"{pre_result} is divisible by {result}")
 print(f"We completed {count} loops")
