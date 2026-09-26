@@ -14,17 +14,17 @@ while True:
     power = random.choice([2,3])
     result = num**power #create random numbers and then randomly square them or cube them
     
-    if (result%pre_result)!=0: # if the current result is not divisible by the previouse result, meaning that the remainder is not 0
+    if  (result%pre_result)==0 and pre_result!=1:#else if the current result is divisible by the previouse result #+extension (if the previous number is *not* 1)
+        count += 1 #add the count to the loop or iteration
+        print(f"Lop {count}: {num}^{power} = {result}") #print values
+        break #stop while loop
+
+    else: # if the current result is not divisible by the previouse result, meaning that the remainder is not 0
         count += 1 #add the count of the loop or iteration
         pre_result = result #update the previouse result
         list.append(result) #store results to the list
         print(f"Lop {count}: {num}^{power} = {result}") #print values
         continue # go back to the start of the loop
-        
-    elif  (result%pre_result)==0 and pre_result!=1:#else if the current result is divisible by the previouse result #+extension (if the previous number is *not* 1)
-        count += 1 #add the count to the loop or iteration
-        print(f"Lop {count}: {num}^{power} = {result}") #print values
-        break #stop while loop
         
 #print values
 print(f"The largest result is {max(list)}") 
