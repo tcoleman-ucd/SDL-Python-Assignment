@@ -22,15 +22,32 @@ j = li**power
 #     if j
 
 
+
+
 num = random.randint(1, 20)
 power = random.choice([2,3])
-result = li**power
-pre_result = 0
+pre_result = num**power
+list = []
+count = 0
 while True:
-    new_result= result
+    num = random.randint(1, 20)
+    power = random.choice([2,3])
+    result = num**power
     
-    if new_result%pre_result==0:
+    if (pre_result%result)!=0:
+        count += 1
+        pre_result = result
+        list.append(result)
+        continue
+        
+    if (pre_result%result)==0:
+        print(f"this is count {count}")
+        print(f"{pre_result} and {result}")
         break
+        
+    
+print(list)
+print(max(list))
+print(min(list))
+    
 
-
-    prev_result = new_result
