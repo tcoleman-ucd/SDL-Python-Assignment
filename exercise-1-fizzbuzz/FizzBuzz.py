@@ -1,3 +1,5 @@
+# Exercise 1 Shreyas Dhumal
+
 #Question:
 #Write a program called fizzbuzz.py that generates a sequence from 1 to 100 according to the rules of the FizzBuzz word game so that:
 # numbers which are multiples of 3 are replaced by "Fizz";
