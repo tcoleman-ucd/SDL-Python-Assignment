@@ -48,6 +48,7 @@ for val in wavelength_list:
     #print(y)
 
 print(new_flux_list)
+#just trying
         
         
     #fut = i +5 +1
