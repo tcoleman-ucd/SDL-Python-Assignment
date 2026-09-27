@@ -23,6 +23,7 @@ for line in spectrum_data:
 
 ############## - ###########
 
+#Valeria Trijueque
 print(np.mean(wavelength_list))
 # prev = []
 # fut = []
