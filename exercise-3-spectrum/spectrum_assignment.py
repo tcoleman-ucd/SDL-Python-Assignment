@@ -26,7 +26,7 @@ for line in spectrum_data:
 
 #Valeria Trijueque
 #Low-order polynomial
-coefficients = np.polyfit(wavelength_list, flux_list, deg=1) #polynomial coefficiens
+coefficients,cov = np.polyfit(wavelength_list, flux_list,deg=1, cov=True) #polynomial coefficiens
 new_flux_list = []#start list for new flux list
 for val in wavelength_list:    
     #print(coefficients)
@@ -44,14 +44,12 @@ for val in flux_list:
     sum += (val + mean)**2 
     
 standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
-####
 ##Another way of calculating the standard deviaiton
 # mean1 = 0
 # for v in flux_list:
 #     mean1 += v
 #     mean2 = sqrt(mean1/len(flux_list))
 # print(mean2)
-###
 
 # gaucian_distribution = [] # calculate gaucian disctribution
 # for flux,wave  in zip(new_flux_list,wavelength_list):
@@ -61,18 +59,16 @@ standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
 #x =np.asarray(flux_list)
 #c_0 = np.asarray(new_flux_list)
 #y =np.asarray(wavelength_list)
-
-
 from scipy.optimize import curve_fit
 #define the function of the gaussian distribution of the peak
 def gaussian(x,A, mu, sigma):#, c_0):
     return A*np.exp(-((x-mu)**2)/(2*sigma**2))#+c_0)) # formula
 
-x = np.asarray(wavelength_list) #convert the list of values into an np array
+x = np.asarray(wavelength_list)#convert the list of values into an np array
 y = np.asarray(flux_list)
 
-wavelength_list_peak = x[(x>6670) &(x<6750)] #select only the peak
-flux_list_peak = y[(x>6670) &(x<6750)]
+wavelength_list_peak = x[(x>6680) &(x<6700)]#select only the peak
+flux_list_peak = y[(x>6680) &(x<6700)]
 
 #use curve_fit to optain the optimal parameters from the initial parameters (which are very acurate)
 par1,par2 = curve_fit(gaussian,wavelength_list_peak, flux_list_peak, p0=[amplitude, wavelength_at_peak, standard_deviation])
@@ -84,6 +80,9 @@ curvey = gaussian(curvex,*par1)
 #calculate the uncertinties of the parameters doing the square of the diagonal
 uncertainties = np.sqrt(np.diag(par2))
 print(uncertainties)
+uncertainties2 = np.sqrt(np.diag(cov))
+print(uncertainties2)
+
 #Calculate uncertinty (THIS IS NOT CORRECT)
 # n = len(flux_list)
 # #uncertinty= 0
