@@ -44,14 +44,12 @@ for val in flux_list:
     sum += (val + mean)**2 
     
 standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
-####
 ##Another way of calculating the standard deviaiton
 # mean1 = 0
 # for v in flux_list:
 #     mean1 += v
 #     mean2 = sqrt(mean1/len(flux_list))
 # print(mean2)
-###
 
 # gaucian_distribution = [] # calculate gaucian disctribution
 # for flux,wave  in zip(new_flux_list,wavelength_list):
@@ -61,29 +59,19 @@ standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
 #x =np.asarray(flux_list)
 #c_0 = np.asarray(new_flux_list)
 #y =np.asarray(wavelength_list)
-
-
 from scipy.optimize import curve_fit
-#define the function of the gaussian distribution of the peak
+#line = np.mean(new_flux_list)
 def gaussian(x,A, mu, sigma):#, c_0):
-    return A*np.exp(-((x-mu)**2)/(2*sigma**2))#+c_0)) # formula
-
-x = np.asarray(wavelength_list) #convert the list of values into an np array
+    return A*np.exp(-((x-mu)**2)/(2*sigma**2))#+c_0))
+x = np.asarray(wavelength_list)
 y = np.asarray(flux_list)
+wavelength_list_peak = x[(x>6680) &(x<6700)]
+flux_list_peak = y[(x>6680) &(x<6700)]
 
-wavelength_list_peak = x[(x>6670) &(x<6750)] #select only the peak
-flux_list_peak = y[(x>6670) &(x<6750)]
-
-#use curve_fit to optain the optimal parameters from the initial parameters (which are very acurate)
-par1,par2 = curve_fit(gaussian,wavelength_list_peak, flux_list_peak, p0=[amplitude, wavelength_at_peak, standard_deviation])
-
-#create a line that fits around the peak(with the selection of threshold done above and the gaussian)
-curvex = np.linspace(min(wavelength_list_peak), max(wavelength_list_peak),2878)
-curvey = gaussian(curvex,*par1)
-
-#calculate the uncertinties of the parameters doing the square of the diagonal
-uncertainties = np.sqrt(np.diag(par2))
-print(uncertainties)
+par1,par2 = curve_fit(gaussian,wavelength_list, flux_list, p0=[amplitude, wavelength_at_peak, standard_deviation])
+#curve_gaussian = gaussian(amplitude, wavelength_at_peak, standard_deviation,x, c_0)
+curvex = np.linspace(min(x), max(x),2878)
+curvey = gaussian(wavelength_list,*par1)
 #Calculate uncertinty (THIS IS NOT CORRECT)
 # n = len(flux_list)
 # #uncertinty= 0
@@ -112,12 +100,10 @@ print(uncertainties)
 plt.close("all")
 #plot Flux vs wavelength
 fig, ax = plt.subplots(figsize=(9,5))
-fig, ax1 = plt.subplots(figsize=(9,5))
-ax1.plot(wavelength_list, flux_list)
-ax.plot(wavelength_list_peak, flux_list_peak)
-ax1.plot(wavelength_list, new_flux_list)
-
-ax.plot(curvex, curvey)
+fig, ax3 = plt.subplots(figsize=(9,5))
+ax3.plot(x, y)
+ax.plot(wavelength_list, new_flux_list)
+ax3.plot(curvex, curvey)
 ax.set_xlabel(r"Wavelength ($\AA$)")
 ax.set_ylabel("Flux (ADU)")
 plt.title("Spectrum Plot")
