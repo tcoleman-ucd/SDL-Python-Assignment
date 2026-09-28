@@ -14,7 +14,8 @@ flight_data = flight_data[12:136]
 
 # Get the names of the headers from the text file
 header_names = flight_data[0].replace(" ", "").strip("\n").split(",")
-
+units = flight_data[1].replace(" ", "").strip("\n").split(",")
+print(units)
 # Initilize the variable to store the numerical flight data
 numerical_data = []
 
@@ -31,3 +32,16 @@ for data_row in flight_data:
 flight_data_dict = dict(zip(header_names, zip(*numerical_data)))
 
 print(flight_data_dict)
+
+#Now make a plot with each parameter as a function of time
+
+for i, header in enumerate(header_names[1:], start=1):
+    fig, ax = plt.subplots(figsize=(9,5))
+    ax.plot(flight_data_dict['TIME'], flight_data_dict[header])
+    ax.set_title(f"Flight Data: {header}")
+    ax.set_xlabel("Time (SEC)")
+    ax.set_ylabel(f"{header}  ({units[i]})")
+plt.show()
+
+
+
