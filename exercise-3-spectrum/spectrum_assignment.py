@@ -54,7 +54,7 @@ standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
 gaucian_distribution = [] # calculate gaucian disctribution
 for flux,wave  in zip(new_flux_list,wavelength_list):
     gaucian = amplitude*m.exp(-((wave-wavelength_at_peak)**2)/(2*standard_deviation**2))+flux
-    gaucian_distribution.append(gaucian)
+    gaucian_distribution.append(gaucian) #curve fit 
 
 #Calculate uncertinty (THIS IS NOT CORRECT)
 # n = len(flux_list)
