@@ -76,6 +76,21 @@ curve = gaussian(wavelength_list,*par1)
    
 #     print(uncertinty)
 
+#######by shreyas####### 
+# Hard coding the peak region
+# approx_peak_center = wavelength[np.argmax(flux)]   #as prof said, we can take a line for the center and consider approx value around it
+# print(approx_peak_center)
+# lower_limit = approx_peak_center - 10                  # 20 is random guess
+# upper_limit = approx_peak_center + 10
+# is_masked = []
+# for value in wavelength:                               # it'll give True if these values are not in peak
+#     if value < lower_limit or value > upper_limit:
+#         is_masked.append(True)
+#     else:
+#         is_masked.append(False)
+# coefficients = np.polyfit(wavelength[is_masked], flux[is_masked], deg=1)
+# new_flux_list = np.polyval(coefficients, wavelength)
+
 ###Ta'Nasia work
 
 #plot Flux vs wavelength
