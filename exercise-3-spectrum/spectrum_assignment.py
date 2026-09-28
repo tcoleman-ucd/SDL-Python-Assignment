@@ -51,11 +51,22 @@ standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
 #     mean2 = sqrt(mean1/len(flux_list))
 # print(mean2)
 
-gaucian_distribution = [] # calculate gaucian disctribution
-for flux,wave  in zip(new_flux_list,wavelength_list):
-    gaucian = amplitude*m.exp(-((wave-wavelength_at_peak)**2)/(2*standard_deviation**2))+flux
-    gaucian_distribution.append(gaucian) #curve fit 
+# gaucian_distribution = [] # calculate gaucian disctribution
+# for flux,wave  in zip(new_flux_list,wavelength_list):
+#     gaucian = amplitude*m.exp(-((wave-wavelength_at_peak)**2)/(2*standard_deviation**2))+flux
+#     gaucian_distribution.append(gaucian) #curve fit 
+#https://www.geeksforgeeks.org/python/python-gaussian-fit/
+#x =np.asarray(flux_list)
+#c_0 = np.asarray(new_flux_list)
+#y =np.asarray(wavelength_list)
+from scipy.optimize import curve_fit
+line = np.mean(new_flux_list)
+def gaussian(x,A, mu, sigma, c_0):
+    return A*np.exp(-((x-mu)**2)/(2*sigma**2+c_0))
 
+par1,par2 = curve_fit(gaussian,wavelength_list, flux_list, p0=[amplitude, wavelength_at_peak, standard_deviation, line])
+#curve_gaussian = gaussian(amplitude, wavelength_at_peak, standard_deviation,x, c_0)
+curve = gaussian(wavelength_list,*par1)
 #Calculate uncertinty (THIS IS NOT CORRECT)
 # n = len(flux_list)
 # #uncertinty= 0
@@ -70,9 +81,9 @@ for flux,wave  in zip(new_flux_list,wavelength_list):
 #plot Flux vs wavelength
 fig, ax = plt.subplots(figsize=(9,5))
 fig, ax1 = plt.subplots(figsize=(9,5))
-ax.plot(wavelength_list, flux_list)
+ax1.plot(wavelength_list, flux_list)
 ax.plot(wavelength_list, new_flux_list)
-ax1.plot(wavelength_list, gaucian_distribution)
+ax1.plot(wavelength_list, curve)
 ax.set_xlabel(r"Wavelength ($\AA$)")
 ax.set_ylabel("Flux (ADU)")
 plt.title("Spectrum Plot")
