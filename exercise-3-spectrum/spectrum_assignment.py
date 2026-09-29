@@ -5,6 +5,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math as m
+from scipy.optimize import curve_fit
 with open("spectrum.txt", 'r') as spectrum_file:
     spectrum_data = spectrum_file.readlines()
 
@@ -26,13 +27,24 @@ for line in spectrum_data:
 
 #Valeria Trijueque
 #Low-order polynomial
-coefficients,cov = np.polyfit(wavelength_list, flux_list,deg=1, cov=True) #polynomial coefficiens
-new_flux_list = []#start list for new flux list
-for val in wavelength_list:    
-    #print(coefficients)
-    y = coefficients[0]*val + coefficients[1] # calculate fitted flux
-    new_flux_list.append(y) #store the values
-    #print(y)
+x = np.asarray(wavelength_list)
+y = np.asarray(flux_list)
+
+def fit_line(x, a, b):
+    return a*x+b
+
+popt, pcov = curve_fit(
+    fit_line,
+    x,
+    y,
+    p0=[1, 1],
+    bounds=[
+        (-5, 0), # lower bounds for each parameter 
+        (10, 1e9)  # upper bounds for each parameter
+    ]
+)
+line = fit_line(x, *popt)
+
 
 amplitude = max(flux_list) #amplitude
 amplitude_index = flux_list.index(amplitude) #index at which the amplitude is max, peak
@@ -59,28 +71,32 @@ standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
 #x =np.asarray(flux_list)
 #c_0 = np.asarray(new_flux_list)
 #y =np.asarray(wavelength_list)
-from scipy.optimize import curve_fit
+
+
 #define the function of the gaussian distribution of the peak
 def gaussian(x,A, mu, sigma):#, c_0):
     return A*np.exp(-((x-mu)**2)/(2*sigma**2))#+c_0)) # formula
 
-x = np.asarray(wavelength_list)#convert the list of values into an np array
-y = np.asarray(flux_list)
+#y1 = gaussian(x, amplitude,wavelength_at_peak, standard_deviation)
 
-wavelength_list_peak = x[(x>6680) &(x<6700)]#select only the peak
-flux_list_peak = y[(x>6680) &(x<6700)]
+#y_total = y1+line
 
-#use curve_fit to optain the optimal parameters from the initial parameters (which are very acurate)
-par1,par2 = curve_fit(gaussian,wavelength_list_peak, flux_list_peak, p0=[amplitude, wavelength_at_peak, standard_deviation])
 
-#create a line that fits around the peak(with the selection of threshold done above and the gaussian)
-curvex = np.linspace(min(wavelength_list_peak), max(wavelength_list_peak),2878)
-curvey = gaussian(curvex,*par1)
+#sub = x-popt[0]
+#wavelength_list_peak = x[(x>6680) &(x<6700)]#select only the peak
+#flux_list_peak = y[(x>6680) &(x<6700)]
 
+#y_true = gaussian(x, amplitude, wavelength_at_peak, standard_deviation)
+
+#y_data = y_true + y
+
+gopt, gcov = curve_fit(gaussian, x, y, p0=[amplitude, wavelength_at_peak, standard_deviation])
+
+y_fit = gaussian(x, *gopt)
 #calculate the uncertinties of the parameters doing the square of the diagonal
-uncertainties = np.sqrt(np.diag(par2))
+uncertainties = np.sqrt(np.diag(pcov))
 print(uncertainties)
-uncertainties2 = np.sqrt(np.diag(cov))
+uncertainties2 = np.sqrt(np.diag(gcov))
 print(uncertainties2)
 
 #Calculate uncertinty (THIS IS NOT CORRECT)
@@ -113,10 +129,10 @@ plt.close("all")
 fig, ax = plt.subplots(figsize=(9,5))
 fig, ax1 = plt.subplots(figsize=(9,5))
 ax1.plot(wavelength_list, flux_list)
-ax.plot(wavelength_list_peak, flux_list_peak)
-ax1.plot(wavelength_list, new_flux_list)
 
-ax.plot(curvex, curvey)
+ax1.plot(wavelength_list, line)
+ax.plot(wavelength_list, flux_list)
+ax.plot(x, y_fit)
 ax.set_xlabel(r"Wavelength ($\AA$)")
 ax.set_ylabel("Flux (ADU)")
 plt.title("Spectrum Plot")
