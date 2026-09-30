@@ -45,6 +45,11 @@ popt, pcov = curve_fit(
 )
 line = fit_line(x, *popt)
 
+sub = y - line
+
+xpeak = x[(x>6670) &(x<6750)] #select only the peak
+ypeak = sub[(x>6670) &(x<6750)]
+
 
 amplitude = max(flux_list) #amplitude
 amplitude_index = flux_list.index(amplitude) #index at which the amplitude is max, peak
@@ -56,6 +61,8 @@ for val in flux_list:
     sum += (val + mean)**2 
     
 standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
+
+FMHW = standard_deviation*2.355
 ##Another way of calculating the standard deviaiton
 # mean1 = 0
 # for v in flux_list:
@@ -90,9 +97,9 @@ def gaussian(x,A, mu, sigma):#, c_0):
 
 #y_data = y_true + y
 
-gopt, gcov = curve_fit(gaussian, x, y, p0=[amplitude, wavelength_at_peak, standard_deviation])
+gopt, gcov = curve_fit(gaussian, xpeak, ypeak, p0=[amplitude, wavelength_at_peak, standard_deviation])
 
-y_fit = gaussian(x, *gopt)
+y_fit = line + gaussian(x, *gopt)
 #calculate the uncertinties of the parameters doing the square of the diagonal
 uncertainties = np.sqrt(np.diag(pcov))
 print(uncertainties)
