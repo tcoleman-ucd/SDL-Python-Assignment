@@ -1,5 +1,4 @@
-#Excersize 3 Ta'Nasia Coleman
-
+#Excersize 3 
 
 ##### By Shreyas Dhumal Code added till data separation of wavelength and flux #####
 import matplotlib.pyplot as plt
@@ -25,44 +24,45 @@ for line in spectrum_data:
 
 ############## - ###########
 
-#Valeria Trijueque
-#Low-order polynomial
-x = np.asarray(wavelength_list)
-y = np.asarray(flux_list)
+##### By Valeria Trijueque - Fit a low-order polynomial and fit gaussian to the emission peak
 
-def fit_line(x, a, b):
-    return a*x+b
+#Fit low-order polynomial:
+x = np.asarray(wavelength_list) #convert the wavelengths list into a numpy array
+y = np.asarray(flux_list) #convert the flux list into a numpy array
 
+def fit_line(x, a, b): #define the low-order polynomial function
+    return a*x+b 
+
+#Optain the best-fit parameters and their uncertinties using curve_fit
 popt, pcov = curve_fit(
     fit_line,
     x,
     y,
     p0=[1, 1],
-    bounds=[
-        (-5, 0), # lower bounds for each parameter 
-        (10, 1e9)  # upper bounds for each parameter
-    ]
 )
-line = fit_line(x, *popt)
 
-sub = y - line
+      
+line = fit_line(x, *popt) #fit line
 
-xpeak = x[(x>6670) &(x<6750)] #select only the peak
+sub = y - line # substract the polynomial fit line and the raw data lo leave the background noise and the emission peak
+
+#select only the peak
+xpeak = x[(x>6670) &(x<6750)] 
 ypeak = sub[(x>6670) &(x<6750)]
 
-
+#Compute the initial parameters
 amplitude = max(flux_list) #amplitude
-amplitude_index = flux_list.index(amplitude) #index at which the amplitude is max, peak
-wavelength_at_peak = wavelength_list[amplitude_index] # wavelength at peak
+amplitude_index = flux_list.index(amplitude) #index amplitude, peak
+wavelength_at_peak = wavelength_list[amplitude_index] #wavelength at peak
 
-mean = np.mean(flux_list) #calculate the mean of flux
+#calculate the standard deviation of the flux
+mean = np.mean(flux_list) 
 sum=0
 for val in flux_list:
     sum += (val + mean)**2 
     
-standard_deviation = np.sqrt(sum/len(flux_list)) #calculate standard deviation
+standard_deviation = np.sqrt(sum/len(flux_list)) 
 
-FMHW = standard_deviation*2.355
 ##Another way of calculating the standard deviaiton
 # mean1 = 0
 # for v in flux_list:
@@ -70,79 +70,64 @@ FMHW = standard_deviation*2.355
 #     mean2 = sqrt(mean1/len(flux_list))
 # print(mean2)
 
-# gaucian_distribution = [] # calculate gaucian disctribution
-# for flux,wave  in zip(new_flux_list,wavelength_list):
-#     gaucian = amplitude*m.exp(-((wave-wavelength_at_peak)**2)/(2*standard_deviation**2))+flux
-#     gaucian_distribution.append(gaucian) #curve fit 
+
 #https://www.geeksforgeeks.org/python/python-gaussian-fit/
-#x =np.asarray(flux_list)
-#c_0 = np.asarray(new_flux_list)
-#y =np.asarray(wavelength_list)
+#https://www.youtube.com/watch?v=peBOquJ3fDo
 
 
-#define the function of the gaussian distribution of the peak
-def gaussian(x,A, mu, sigma):#, c_0):
-    return A*np.exp(-((x-mu)**2)/(2*sigma**2))#+c_0)) # formula
+#define the function for the gaussian fit:
+def gaussian(x,A, mu, sigma):
+    return A*np.exp(-((x-mu)**2)/(2*sigma**2))
+#Where A is the amplitude, x is the raw flux data, mu is the position of the center of the peak, and sigma**2 is the variance
 
-#y1 = gaussian(x, amplitude,wavelength_at_peak, standard_deviation)
-
-#y_total = y1+line
-
-
-#sub = x-popt[0]
-#wavelength_list_peak = x[(x>6680) &(x<6700)]#select only the peak
-#flux_list_peak = y[(x>6680) &(x<6700)]
-
-#y_true = gaussian(x, amplitude, wavelength_at_peak, standard_deviation)
-
-#y_data = y_true + y
-
+#Obtain the best fit parameters from the gaussian fit and their uncertinties
 gopt, gcov = curve_fit(gaussian, xpeak, ypeak, p0=[amplitude, wavelength_at_peak, standard_deviation])
 
-y_fit = line + gaussian(x, *gopt)
+y_fit = line + gaussian(x, *gopt) #bring the baseline of the gaussian to the spectrum baseline using the polynomial fit line 
+
+FMHW = gopt[2]*2.355 #full-width at half-maximum
+
+#Print the best fit parameters from the gaussian and polynomial
+print(f"The best fit amplitude is {gopt[0]}")
+print(f"The best fit central wavelength of the peak is {gopt[1]}")
+print(f"The best fit FWHM is {FMHW}")
+
+print(f"The slope of the low order polynomial is {popt[0]}")
+print(f"The y-intercept of the low order polynomial is {popt[1]}")
+
 #calculate the uncertinties of the parameters doing the square of the diagonal
-uncertainties = np.sqrt(np.diag(pcov))
-print(uncertainties)
-uncertainties2 = np.sqrt(np.diag(gcov))
-print(uncertainties2)
+uncertainties = np.sqrt(np.diag(gcov))
+FMHWuncertainty = uncertainties[2]*2.355
+print(f"The uncertainty of the amplitude is {uncertainties[0]}")
+print(f"The uncertainty of the central wavelength of the peak is {uncertainties[1]}")
+print(f"The uncertainty of the FWHM is {FMHWuncertainty}")
+uncertainties_poly = np.sqrt(np.diag(pcov))
+print(f"The uncertainty of the slope is {uncertainties_poly[0]}")
+print(f"The uncertainty of the y-intercept is {uncertainties_poly[1]}")
 
-#Calculate uncertinty (THIS IS NOT CORRECT)
-# n = len(flux_list)
-# #uncertinty= 0
-# for b in gaucian_distribution:
-    
-#     uncertinty = np.sqrt((b+mean)**2/(n*(n-1)))
-   
-#     print(uncertinty)
 
-#######by shreyas####### 
-# Hard coding the peak region
-# approx_peak_center = wavelength[np.argmax(flux)]   #as prof said, we can take a line for the center and consider approx value around it
-# print(approx_peak_center)
-# lower_limit = approx_peak_center - 10                  # 20 is random guess
-# upper_limit = approx_peak_center + 10
-# is_masked = []
-# for value in wavelength:                               # it'll give True if these values are not in peak
-#     if value < lower_limit or value > upper_limit:
-#         is_masked.append(True)
-#     else:
-#         is_masked.append(False)
-# coefficients = np.polyfit(wavelength[is_masked], flux[is_masked], deg=1)
-# new_flux_list = np.polyval(coefficients, wavelength)
-
-###Ta'Nasia work
+#### By Ta'Nasia - plot the spectrum
 plt.close("all")
 #plot Flux vs wavelength
 fig, ax = plt.subplots(figsize=(9,5))
 fig, ax1 = plt.subplots(figsize=(9,5))
-ax1.plot(wavelength_list, flux_list)
+fig, ax2 = plt.subplots(figsize=(9,5))
 
-ax1.plot(wavelength_list, line)
 ax.plot(wavelength_list, flux_list)
-ax.plot(x, y_fit)
+ax1.plot(wavelength_list, flux_list)
+ax1.plot(wavelength_list, line, 'g-')
+ax2.plot(wavelength_list, flux_list)
+ax2.plot(wavelength_list, line,'g-')
+ax2.plot(wavelength_list, y_fit,'r-')
 ax.set_xlabel(r"Wavelength ($\AA$)")
 ax.set_ylabel("Flux (ADU)")
-plt.title("Spectrum Plot")
+ax1.set_xlabel(r"Wavelength ($\AA$)")
+ax1.set_ylabel("Flux (ADU)")
+ax2.set_xlabel(r"Wavelength ($\AA$)")
+ax2.set_ylabel("Flux (ADU)")
+ax.set_title("Spectrum Plot")
+ax1.set_title("Spectrum Plot with polynomial fit")
+ax2.set_title("Spectrum Plot with polynomial and gaussian fit")
 
 plt.show()
 #plot of flux vs wavelength with fitted curve
