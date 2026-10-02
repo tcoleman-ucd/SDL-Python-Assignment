@@ -130,6 +130,4 @@ ax1.set_title("Spectrum Plot with polynomial fit")
 ax2.set_title("Spectrum Plot with polynomial and gaussian fit")
 
 plt.show()
-#plot of flux vs wavelength with fitted curve
-max_fl = max(flux_list) #Need to find the emission line/max flux and then remove it from the list to plot the polynomial
-#index = np.where(flux_list == max_fl)
+

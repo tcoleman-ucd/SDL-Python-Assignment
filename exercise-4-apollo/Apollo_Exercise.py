@@ -51,34 +51,45 @@ vertical_coord = flight_data_dict['GCLAT']
 altitude_coord = flight_data_dict['ALTITUDE']
 
 # https://matplotlib.org/stable/gallery/lines_bars_and_markers/multicolored_line.html (multicolor lines )
+fig1, ax1 = plt.subplots()
 fig2, ax2 = plt.subplots()
 # for whole map
-# map_img = plt.imread("NE1_50M_SR_W_1080.png")
-# #ax2.imshow(map_img, extent=[-180, 180, -90, 90])     #  https://matplotlib.org/stable/users/explain/artists/imshow_extent.html
+map_img = plt.imread("NE1_50M_SR_W_1080.png")
+ax2.imshow(map_img, extent=[-180, 180, -90, 90])     #  https://matplotlib.org/stable/users/explain/artists/imshow_extent.html
 
 #for cropped
 map_img = plt.imread("NE1_50M_SR_W_CROPPED_1080.png")
-ax2.imshow(map_img, extent=[-120, -30, 15, 60])
-ax2.set_aspect('equal')
+ax1.imshow(map_img, extent=[-120, -30, 15, 60])
+ax1.set_aspect('equal')
 
 point_pairs = np.array([horizontal_coord, vertical_coord]).T.reshape(-1, 1, 2)   #it'll make pair and transpose the horizontal array
 segments = np.concatenate([point_pairs[:-1], point_pairs[1:]], axis=1)
 line = LineCollection(segments, cmap='plasma')     # this will create the line and assign color 
 line.set_array(np.array(altitude_coord))
 line.set_linewidth(2)
+line2 = LineCollection(segments, cmap='plasma')     # this will create the line and assign color 
+line2.set_array(np.array(altitude_coord))
+line2.set_linewidth(2)
+#ax1.add_collection(line)#
 
-ax2.add_collection(line)
 #  for whole map
-# ax2.set_xlim(-180, 180)
-# ax2.set_ylim(-90, 90)
-
-#for cropped
-ax2.set_xlim(-120, -30)
-ax2.set_ylim(15, 60)
+ax2.set_xlim(-180, 180)
+ax2.set_ylim(-90, 90)
+ax2.add_collection(line)
 
 ax2.set_xlabel("Longitude")
 ax2.set_ylabel("Latitude")
 ax2.set_title("Apollo 10 Groundtrack")
+
+
+#for cropped
+ax1.set_xlim(-120, -30)
+ax1.set_ylim(15, 60)
+ax1.add_collection(line2)
+
+ax1.set_xlabel("Longitude")
+ax1.set_ylabel("Latitude")
+ax1.set_title("Apollo 10 Groundtrack")
 colour_bar = fig2.colorbar(line, ax=ax2)
 colour_bar.set_label("Altitude")
 
