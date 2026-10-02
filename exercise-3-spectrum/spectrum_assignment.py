@@ -5,35 +5,33 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import math as m
+import sys
+import argparse
 from scipy.optimize import curve_fit
-file = "spectrum.txt"
-def main(file):
-    with open("spectrum.txt", 'r') as spectrum_file:
-        spectrum_data = spectrum_file.readlines()
+with open("spectrum.txt", 'r') as spectrum_file:
+    spectrum_data = spectrum_file.readlines()
 
-
-        wavelength_list = []
-        flux_list = []
-        is_data_reached = False
-        for line in spectrum_data:
-            line = line.strip()        #It'll remove next line jump in readline
-            if line == "# DATA":
-                is_data_reached = True   #this will tell the loop do operations after Data line is reached 
-                continue
-            if is_data_reached:
-                if line == "WAVELENGTH,FLUX":      
-                    continue
-                wavelength_list.append(float(line.split(",")[0]))
-                flux_list.append(float(line.split(",")[1]))
+wavelength_list = []
+flux_list = []
+is_data_reached = False
+for line in spectrum_data:
+    line = line.strip()        #It'll remove next line jump in readline
+    if line == "# DATA":
+        is_data_reached = True   #this will tell the loop do operations after Data line is reached 
+        continue
+    if is_data_reached:
+        if line == "WAVELENGTH,FLUX":      
+            continue
+        wavelength_list.append(float(line.split(",")[0]))
+        flux_list.append(float(line.split(",")[1]))
 
     ############## - ###########
 
-    ##### By Valeria Trijueque - Fit a low-order polynomial and fit gaussian to the emission peak
+##### By Valeria Trijueque - Fit a low-order polynomial and fit gaussian to the emission peak
 
-    
-    #Fit low-order polynomial:
-    x = np.asarray(wavelength_list) #convert the wavelengths list into a numpy array
-    y = np.asarray(flux_list) #convert the flux list into a numpy array
+#Fit low-order polynomial:
+x = np.asarray(wavelength_list) #convert the wavelengths list into a numpy array
+y = np.asarray(flux_list) #convert the flux list into a numpy array
 
     def fit_line(x, a, b): #define the low-order polynomial function
         return a*x+b 
@@ -136,8 +134,3 @@ def main(file):
 
     plt.show()
 
-if __name__ == '__main__':
-    # main()
-    # or get the arguments here
-    args = sys.argv[1:]
-    main(args[0])
