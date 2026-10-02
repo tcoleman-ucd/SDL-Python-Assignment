@@ -1,6 +1,10 @@
 #Valeria Trijueque
 
 import random #Import random library
+#from sys import 
+
+#print 'Number of arguments:', len(sys.argv), 'arguments.'
+#print 'Argument List:', str(sys.argv)
 
 num = random.randint(1, 20) #Make random numbers from 1 to 20
 power = random.choice([2,3]) #Choose between square or cube
