@@ -33,7 +33,7 @@ for line in spectrum_data:
 x = np.asarray(wavelength_list) #convert the wavelengths list into a numpy array
 y = np.asarray(flux_list) #convert the flux list into a numpy array
 
-    def fit_line(x, a, b): #define the low-order polynomial function
+def fit_line(x, a, b): #define the low-order polynomial function
         return a*x+b 
 
     #Optain the best-fit parameters and their uncertinties using curve_fit
