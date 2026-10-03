@@ -15,7 +15,9 @@
 ############### Main Question with extension #####################
 
 fizzbuzz_list = []
+count_list = []
 for num in range(1, 101):
+    count_list.append(num) 
     word = ""
     if num % 3 == 0:
         word += "Fizz"  # if number is divisible by 3 it'll replace the number by "Fizz" word
@@ -30,7 +32,10 @@ for num in range(1, 101):
     else:
         fizzbuzz_list.append(word)
 
-print(f" FizzBuzz List : {fizzbuzz_list}")
+for val, num in zip(fizzbuzz_list, count_list):
+    print(f" {num} : {val}")
+
+
 
 ############### Version 1 #####################
 
