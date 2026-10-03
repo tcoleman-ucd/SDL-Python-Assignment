@@ -1,25 +1,24 @@
-#Valeria Trijueque
+###Valeria Trijueque
 
 import random #Import random library
-#from sys import 
 
-#print 'Number of arguments:', len(sys.argv), 'arguments.'
-#print 'Argument List:', str(sys.argv)
-
-num = random.randint(1, 20) #Make random numbers from 1 to 20
-power = random.choice([2,3]) #Choose between square or cube
-pre_result = num**power #Create the first previous result
 list = [] #Initialize a list
 count = 0 #Initialize a count
+pre_result = 0 #Initialize the previouse result
 
 #While loop
 while True:
-    num = random.randint(1, 20)
-    power = random.choice([2,3])
+    num = random.randint(1, 20)#random number between 1 and 20
+    power = random.choice([2,3]) #random choice between square or cube the number
     result = num**power #create random numbers and then randomly square them or cube them
-    
-    if  (result%pre_result)==0 and pre_result!=1:#else if the current result is divisible by the previouse result #+extension (if the previous number is *not* 1)
+
+    if pre_result ==0: # if the previouse result is equal to zero continue, because we cannot devide a number by zero
+        pre_result = result #update the previouse result
+        continue
+
+    if  (result%pre_result)==0 and pre_result!=1:#if the current result is divisible by the previouse result #+extension (if the previous number is *not* 1)
         count += 1 #add the count to the loop or iteration
+        list.append(result)
         print(f"Lop {count}: {num}^{power} = {result}") #print values
         break #stop while loop
 
