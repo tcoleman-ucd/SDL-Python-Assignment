@@ -44,7 +44,7 @@ for i, header in enumerate(header_names[1:], start=1):
     ax.set_title(f"Flight Data: {header}")
     ax.set_xlabel("Time (SEC)")
     ax.set_ylabel(f"{header}  ({units[i]})")
-plt.show()
+
 
 
 ######## By Shreyas Dhumal ####### (Improved version)
@@ -59,8 +59,8 @@ altitude_coord = flight_data_dict["ALTITUDE"]
 # https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.LineCollection
 
 # Loading the maps
-whole_map = plt.imread("NE1_50M_SR_W_1080.png")
-cropped_map = plt.imread("NE1_50M_SR_W_CROPPED_1080.png")
+whole_map = plt.imread("maps/NE1_50M_SR_W_1080.png")
+cropped_map = plt.imread("maps/NE1_50M_SR_W_CROPPED_1080.png")
 
 fig_whole, ax_whole = plt.subplots(figsize=(10, 6), layout="constrained")
 fig_cropped, ax_cropped = plt.subplots(figsize=(10, 6), layout="constrained")
