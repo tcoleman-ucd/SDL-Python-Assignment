@@ -92,22 +92,25 @@ def main(filename):
     FMHW = gopt[2]*2.355 #full-width at half-maximum
 
     #Print the best fit parameters from the gaussian and polynomial
-    print(f"The best fit amplitude is {gopt[0]}")
-    print(f"The best fit central wavelength of the peak is {gopt[1]}")
-    print(f"The best fit FWHM is {FMHW}")
-
-    print(f"The slope of the low order polynomial is {popt[0]}")
+    #Gaussian
+    print(f"The best fit amplitude is {gopt[0]} ADU")
+    print(f"The best fit central wavelength of the peak is {gopt[1]} Angstrom")
+    print(f"The best fit FWHM is {FMHW} Angstrom")
+    #Polynomial
+    print(f"The slope of the low order polynomial is {popt[0]} ADU/Angstrom")
     print(f"The y-intercept of the low order polynomial is {popt[1]}")
 
     #calculate the uncertinties of the parameters doing the square of the diagonal
+    #gaussian
     uncertainties = np.sqrt(np.diag(gcov))
     FMHWuncertainty = uncertainties[2]*2.355
-    print(f"The uncertainty of the amplitude is {uncertainties[0]}")
-    print(f"The uncertainty of the central wavelength of the peak is {uncertainties[1]}")
-    print(f"The uncertainty of the FWHM is {FMHWuncertainty}")
+    print(f"The uncertainty of the amplitude is {uncertainties[0]} ADU")
+    print(f"The uncertainty of the central wavelength of the peak is {uncertainties[1]} Angstrom")
+    print(f"The uncertainty of the FWHM is {FMHWuncertainty} Angstrom")
+    #Polynomial
     uncertainties_poly = np.sqrt(np.diag(pcov))
-    print(f"The uncertainty of the slope is {uncertainties_poly[0]}")
-    print(f"The uncertainty of the y-intercept is {uncertainties_poly[1]}")
+    print(f"The uncertainty of the slope is {uncertainties_poly[0]} ADU/Angstrom")
+    print(f"The uncertainty of the y-intercept is {uncertainties_poly[1]} ADU")
 
 
     #### By Ta'Nasia - plot the spectrum
@@ -117,16 +120,23 @@ def main(filename):
     fig, ax1 = plt.subplots(figsize=(9,5))
     fig, ax2 = plt.subplots(figsize=(9,5))
 
+    #Plot only the spectrum
     ax.plot(wavelength_list, flux_list)
-    ax1.plot(wavelength_list, flux_list)
-    ax1.plot(wavelength_list, line, 'g-')
-    ax2.plot(wavelength_list, flux_list)
-    ax2.plot(wavelength_list, line,'g-')
-    ax2.plot(wavelength_list, y_fit,'r-')
     ax.set_xlabel(r"Wavelength ($\AA$)")
     ax.set_ylabel("Flux (ADU)")
+
+    #Plot spectrum + polynomial fit
+    ax1.plot(wavelength_list, flux_list)
+    ax1.plot(wavelength_list, line, 'g-', label = 'Polynomial fit')
+    ax1.legend(loc='upper right')
     ax1.set_xlabel(r"Wavelength ($\AA$)")
     ax1.set_ylabel("Flux (ADU)")
+
+    #Plot spectrum + polynomial fit and gaussian
+    ax2.plot(wavelength_list, flux_list)
+    ax2.plot(wavelength_list, line,'g-', label = 'Polynomial fit')
+    ax2.plot(wavelength_list, y_fit,'r-', label = 'Gaussian fit')
+    ax2.legend(loc='upper right')
     ax2.set_xlabel(r"Wavelength ($\AA$)")
     ax2.set_ylabel("Flux (ADU)")
     ax.set_title("Spectrum Plot")
