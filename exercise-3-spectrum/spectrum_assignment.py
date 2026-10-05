@@ -34,25 +34,29 @@ def main(filename):
     x = np.asarray(wavelength_list) #convert the wavelengths list into a numpy array
     y = np.asarray(flux_list) #convert the flux list into a numpy array
 
+    mask = ((x>6680) &(x<6695))
+
+    g = ~mask
+    xnopeak = x[g] 
+    ynopeak = y[g]
+
     def fit_line(x, a, b): #define the low-order polynomial function
         return a*x+b 
 
+    
     #Optain the best-fit parameters and their uncertinties using curve_fit
     popt, pcov = curve_fit(
         fit_line,
-        x,
-        y,
+        xnopeak,
+        ynopeak,
         p0=[1, 1],
-    )
+        )
 
-        
-    line = fit_line(x, *popt) #fit line
+    linenp = fit_line(x, *popt) #fit line
 
-    sub = y - line # substract the polynomial fit line and the raw data lo leave the background noise and the emission peak
-
-    #select only the peak
-    xpeak = x[(x>6680) &(x<6695)] 
-    ypeak = sub[(x>6680) &(x<6695)]
+    sub = y - linenp # substract the polynomial fit line and the raw data lo leave the background noise and the emission peak (substract the continuum)
+    xpeak = x[mask] 
+    ypeak = sub[mask]
 
     #Compute the initial parameters
     amplitude = max(flux_list) #amplitude
@@ -87,7 +91,7 @@ def main(filename):
     #Obtain the best fit parameters from the gaussian fit and their uncertinties
     gopt, gcov = curve_fit(gaussian, xpeak, ypeak, p0=[amplitude, wavelength_at_peak, standard_deviation])
 
-    y_fit = line + gaussian(x, *gopt) #bring the baseline of the gaussian to the spectrum baseline using the polynomial fit line 
+    y_fit = linenp + gaussian(x, *gopt) #bring the baseline of the gaussian to the spectrum baseline using the polynomial fit line 
 
     FMHW = gopt[2]*2.355 #full-width at half-maximum
 
@@ -127,7 +131,7 @@ def main(filename):
 
     #Plot spectrum + polynomial fit
     ax1.plot(wavelength_list, flux_list)
-    ax1.plot(wavelength_list, line, 'g-', label = 'Polynomial fit')
+    ax1.plot(wavelength_list, linenp, 'g-', label = 'Polynomial fit')
     ax1.axvspan(np.min(xpeak),np.max(xpeak) , ymin=0, ymax=1 ,facecolor='m', alpha=0.1, label = 'peak')
     ax1.legend(loc='upper right')
     ax1.set_xlabel(r"Wavelength ($\AA$)")
@@ -135,7 +139,7 @@ def main(filename):
 
     #Plot spectrum + polynomial fit and gaussian
     ax2.plot(wavelength_list, flux_list)
-    ax2.plot(wavelength_list, line,'g-', label = 'Polynomial fit')
+    ax2.plot(wavelength_list, linenp, 'g-', label = 'Polynomial fit')
     ax2.plot(wavelength_list, y_fit,'r-', label = 'Gaussian fit')
     ax2.axvspan(np.min(xpeak),np.max(xpeak) , ymin=0, ymax=1 ,facecolor='m', alpha=0.1, label = 'peak')
     ax2.legend(loc='upper right')
