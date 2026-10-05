@@ -28,7 +28,7 @@ def main(filename):
 
     ##### By Valeria Trijueque - Fit a low-order polynomial and fit gaussian to the emission peak
 
-    #Fit low-order polynomial:
+    
     x = np.asarray(wavelength_list) #convert the wavelengths list into a numpy array
     y = np.asarray(flux_list) #convert the flux list into a numpy array
 
@@ -38,6 +38,7 @@ def main(filename):
     xnopeak = x[g]  #mask the wavelength list to ignore the peak
     ynopeak = y[g]  #mark the flux list to ignore the peak
 
+    ##FIT LOW-ORDER POLYNOMIAL:
     def fit_line(x, a, b): #define the low-order polynomial function
         return a*x+b 
 
@@ -53,9 +54,8 @@ def main(filename):
     linenp = fit_line(x, *popt) #fit line
 
     sub = y - linenp # substract the polynomial fit line and the raw data to leave the emission peak (substract the continuum)
-    xpeak = x[mask] # mask the peak
-    ypeak = sub[mask] #mask the peak
 
+    ##FIT GAUSSIAN:
     #Compute the initial parameters
     amplitude = max(flux_list) #amplitude
     amplitude_index = flux_list.index(amplitude) #index amplitude, peak
@@ -86,15 +86,18 @@ def main(filename):
         return A*np.exp(-((x-mu)**2)/(2*sigma**2))
     #Where A is the amplitude, x is the raw flux data, mu is the position of the center of the peak, and sigma**2 is the variance
 
+    xpeak = x[mask] # mask the peak
+    ypeak = sub[mask] #mask the peak
+    
     #Obtain the best fit parameters from the gaussian fit and their uncertinties
     gopt, gcov = curve_fit(gaussian, xpeak, ypeak, p0=[amplitude, wavelength_at_peak, standard_deviation])
 
     y_fit = linenp + gaussian(x, *gopt) #bring the baseline of the gaussian to the spectrum baseline using the polynomial fit line 
 
-    FMHW = gopt[2]*2.355 #full-width at half-maximum
 
     #Print the best fit parameters from the gaussian and polynomial
     #Gaussian
+    FMHW = gopt[2]*2.355 #full-width at half-maximum
     print(f"The best fit amplitude is {gopt[0]} ADU")
     print(f"The best fit central wavelength of the peak is {gopt[1]} Angstrom")
     print(f"The best fit FWHM is {FMHW} Angstrom")
