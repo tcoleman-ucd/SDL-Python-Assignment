@@ -1,5 +1,7 @@
 #Excersize 3 
 
+## Command: python spectrum_assignment.py spectrum.txt
+
 ##### By Shreyas Dhumal Code added till data separation of wavelength and flux #####
 import matplotlib.pyplot as plt
 import numpy as np
