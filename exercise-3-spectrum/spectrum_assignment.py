@@ -51,8 +51,8 @@ def main(filename):
     sub = y - line # substract the polynomial fit line and the raw data lo leave the background noise and the emission peak
 
     #select only the peak
-    xpeak = x[(x>6670) &(x<6750)] 
-    ypeak = sub[(x>6670) &(x<6750)]
+    xpeak = x[(x>6680) &(x<6695)] 
+    ypeak = sub[(x>6680) &(x<6695)]
 
     #Compute the initial parameters
     amplitude = max(flux_list) #amplitude
@@ -128,6 +128,7 @@ def main(filename):
     #Plot spectrum + polynomial fit
     ax1.plot(wavelength_list, flux_list)
     ax1.plot(wavelength_list, line, 'g-', label = 'Polynomial fit')
+    ax1.axvspan(np.min(xpeak),np.max(xpeak) , ymin=0, ymax=1 ,facecolor='m', alpha=0.1, label = 'peak')
     ax1.legend(loc='upper right')
     ax1.set_xlabel(r"Wavelength ($\AA$)")
     ax1.set_ylabel("Flux (ADU)")
@@ -136,15 +137,18 @@ def main(filename):
     ax2.plot(wavelength_list, flux_list)
     ax2.plot(wavelength_list, line,'g-', label = 'Polynomial fit')
     ax2.plot(wavelength_list, y_fit,'r-', label = 'Gaussian fit')
+    ax2.axvspan(np.min(xpeak),np.max(xpeak) , ymin=0, ymax=1 ,facecolor='m', alpha=0.1, label = 'peak')
     ax2.legend(loc='upper right')
     ax2.set_xlabel(r"Wavelength ($\AA$)")
     ax2.set_ylabel("Flux (ADU)")
     ax.set_title("Spectrum Plot")
     ax1.set_title("Spectrum Plot with polynomial fit")
     ax2.set_title("Spectrum Plot with polynomial and gaussian fit")
-
+    
     plt.show()
+    
 
 if __name__ == '__main__':
     args = sys.argv[1:]
     main(args[0])
+    
