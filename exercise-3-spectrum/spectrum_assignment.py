@@ -3,9 +3,7 @@
 ##### By Shreyas Dhumal Code added till data separation of wavelength and flux #####
 import matplotlib.pyplot as plt
 import numpy as np
-import math as m
 import sys
-import argparse
 from scipy.optimize import curve_fit
 
 def main(filename):
@@ -34,11 +32,11 @@ def main(filename):
     x = np.asarray(wavelength_list) #convert the wavelengths list into a numpy array
     y = np.asarray(flux_list) #convert the flux list into a numpy array
 
-    mask = ((x>6680) &(x<6695))
+    mask = ((x>6680) &(x<6695)) # define a mask
 
-    g = ~mask
-    xnopeak = x[g] 
-    ynopeak = y[g]
+    g = ~mask # inverse the mask
+    xnopeak = x[g]  #mask the wavelength list to ignore the peak
+    ynopeak = y[g]  #mark the flux list to ignore the peak
 
     def fit_line(x, a, b): #define the low-order polynomial function
         return a*x+b 
@@ -54,9 +52,9 @@ def main(filename):
 
     linenp = fit_line(x, *popt) #fit line
 
-    sub = y - linenp # substract the polynomial fit line and the raw data lo leave the background noise and the emission peak (substract the continuum)
-    xpeak = x[mask] 
-    ypeak = sub[mask]
+    sub = y - linenp # substract the polynomial fit line and the raw data to leave the emission peak (substract the continuum)
+    xpeak = x[mask] # mask the peak
+    ypeak = sub[mask] #mask the peak
 
     #Compute the initial parameters
     amplitude = max(flux_list) #amplitude
